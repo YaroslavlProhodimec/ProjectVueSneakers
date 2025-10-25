@@ -1,14 +1,14 @@
 <script setup>
 import AppHeader from '@/components/AppHeader.vue'
-import SneakerCard from '@/components/SneakerCard.vue'
+import SneakersCardList from '@/components/SneakersCardList.vue'
 </script>
 
 <template>
   <div class="w-4/5 m-auto h-screen rounded-xl shadow-xl mt-14">
     <AppHeader />
-    <h2 class="text-3xl fond-bold">Все кроссовки</h2>
-    <div>
-    <SneakerCard/>
+    <div class="p-10">
+    <h2 class="text-3xl fond-bold mb-8">Все кроссовки</h2>
+    <SneakersCardList/>
     </div>
   </div>
 </template>

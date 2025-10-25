@@ -6,7 +6,7 @@ const handleClickAdd = () => {
 
 </script>
 <template>
-  <div class="grid grid-cols-4 gap-6">
+  <div class="grid grid-cols-4 gap-5">
     <SneakerCard
       image-url="sneakers/sneakers-1.jpg"
       title="Мужские Кроссовки Nike Blazer Mid Suede"

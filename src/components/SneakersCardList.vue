@@ -1,5 +1,8 @@
 <script setup>
 import SneakerCard from '/src/components/SneakerCard.vue'
+defineProps({
+  items: Array,
+})
 const handleClickAdd = () => {
 
 }
@@ -8,9 +11,11 @@ const handleClickAdd = () => {
 <template>
   <div class="grid grid-cols-4 gap-5">
     <SneakerCard
-      image-url="sneakers/sneakers-1.jpg"
-      title="Мужские Кроссовки Nike Blazer Mid Suede"
-      :price="5000"
+      v-for="item in items"
+      :key="item.id"
+      :image-url="item.imageUrl"
+      :title="item.title"
+      :price="item.price"
       :is-added="false"
       :is-favourite="true"
        :on-click-add="handleClickAdd"

@@ -18,8 +18,8 @@ const handleClickAdd = () => {
       :price="item.price"
       :is-added="false"
       :is-favourite="true"
-       :on-click-add="handleClickAdd"
-       :on-click-add-favourite="onClickAddFavourite"
+      :on-click-add="handleClickAdd"
+      :is-favorite="item.isFavorite"
     />
   </div>
 </template>

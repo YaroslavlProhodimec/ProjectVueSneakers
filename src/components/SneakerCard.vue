@@ -11,8 +11,6 @@ defineProps({
   onClickFavorite: Function,
 })
 
-
-
 </script>
 
 <template>

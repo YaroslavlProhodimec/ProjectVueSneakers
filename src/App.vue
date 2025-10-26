@@ -1,15 +1,24 @@
 <script setup>
 import AppHeader from '@/components/AppHeader.vue'
 import SneakersCardList from '@/components/SneakersCardList.vue'
-import { onMounted,  reactive, ref, watch } from 'vue'
+import { onMounted, provide, reactive, ref, watch } from 'vue'
 import axios from 'axios'
+import DrawerSide from '@/components/DrawerSide.vue'
 // import DrawerSide from '@/components/DrawerSide.vue'
 const items = ref([])
 
 const filters = reactive({
   sortBy: 'title',
-  searchQuery: ''
+  searchQuery: '',
 })
+const addToCart = (item) => {
+  if (!item.isAdded) {
+    item.isAdded = true
+  } else {
+    item.isAdded = false
+  }
+}
+
 const onChangeSelect = (event) => {
   filters.sortBy = event.target.value
 }
@@ -17,14 +26,30 @@ const onChangeInput = (event) => {
   filters.searchQuery = event.target.value
 }
 
-const addToFavorite  = (item) => {
-// item.isFavorite = !item.isFavorite
-}
+const addToFavorite = async (item) => {
+  // item.isFavorite = !item.isFavorite
+  try {
+    if (!item.isFavorite) {
+      const obj = {
+        parentsId: item.id,
+      }
+      const { data } = await axios.post('https://5ac01713d7a29def.mokky.dev/favorites', obj)
 
+      item.isFavorite = true
+      item.favoriteId = data.id
+    } else {
+      await axios.delete(`https://5ac01713d7a29def.mokky.dev/favorites/${item.favoriteId}`)
+      item.isFavorite = false
+      item.favoriteId = null
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 const fetchItems = async () => {
   const params = {
-    sortBy: filters.sortBy
+    sortBy: filters.sortBy,
   }
   if (filters.searchQuery) {
     params.title = `*${filters.searchQuery}`
@@ -36,17 +61,15 @@ const fetchItems = async () => {
     items.value = data.map((item) => ({
       ...item,
       isFavorite: false,
-      isAdded: false
+      isAdded: false,
     }))
   } catch (e) {
     console.log(e)
   }
 }
 const fetchFavorites = async () => {
-
   try {
-    const { data: favorites } = await axios.get('https://5ac01713d7a29def.mokky.dev/favorites', )
-
+    const { data: favorites } = await axios.get('https://5ac01713d7a29def.mokky.dev/favorites')
 
     items.value = items.value.map((item) => {
       const favorite = favorites.find((favorite) => favorite.parentId === item.id)
@@ -58,24 +81,38 @@ const fetchFavorites = async () => {
       return {
         ...item,
         isFavorite: true,
-        favoriteId: favorite.id
+        favoriteId: favorite.id,
       }
-     })
-
-
+    })
   } catch (e) {
     console.log(e)
   }
 }
 
-onMounted(fetchItems(),fetchFavorites())
+onMounted(async () => {
+  await fetchItems()
+  await fetchFavorites()
+})
 watch(filters, fetchItems)
+const drawerOpen = ref(false)
+const closeDrawer = () => {
+  drawerOpen.value = false
+}
+const openDrawer = () => {
+  drawerOpen.value = true
+}
+
+provide('cart', {
+
+  closeDrawer,
+  openDrawer,
+})
 </script>
 
 <template>
   <div class="w-4/5 m-auto h-screen rounded-xl shadow-xl mt-14">
-    <AppHeader />
-    <!--    <DrawerSide />-->
+    <AppHeader @open-drawer="openDrawer" />
+    <DrawerSide v-if="drawerOpen" @closeDrawer="closeDrawer" />
     <div class="p-10">
       <div class="flex justify-between items-center">
         <h2 class="text-3xl fond-bold mb-8">Все кроссовки</h2>
@@ -98,7 +135,7 @@ watch(filters, fetchItems)
         </div>
       </div>
       <div class="mt-10">
-        <SneakersCardList :items="items" @addToFavorite="addToFavorite"  />
+        <SneakersCardList :items="items" @addToFavorite="addToFavorite" @addToCart="addToCart" />
       </div>
     </div>
   </div>

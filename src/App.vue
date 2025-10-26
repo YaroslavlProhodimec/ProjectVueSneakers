@@ -1,7 +1,7 @@
 <script setup>
 import AppHeader from '@/components/AppHeader.vue'
 import SneakersCardList from '@/components/SneakersCardList.vue'
-import { onMounted, provide, reactive, ref, watch, watchEffect } from 'vue'
+import { onMounted,  reactive, ref, watch } from 'vue'
 import axios from 'axios'
 // import DrawerSide from '@/components/DrawerSide.vue'
 const items = ref([])
@@ -18,7 +18,7 @@ const onChangeInput = (event) => {
 }
 
 const addToFavorite  = (item) => {
-item.isFavorite = true
+// item.isFavorite = !item.isFavorite
 }
 
 
@@ -45,7 +45,7 @@ const fetchItems = async () => {
 const fetchFavorites = async () => {
 
   try {
-    const { data: favorites } = await axios.get('https://5ac01713d7a29def.mokky.dev/favorites', { params })
+    const { data: favorites } = await axios.get('https://5ac01713d7a29def.mokky.dev/favorites', )
 
 
     items.value = items.value.map((item) => {
@@ -68,9 +68,8 @@ const fetchFavorites = async () => {
   }
 }
 
-onMounted(fetchItems,fetchFavorites)
+onMounted(fetchItems(),fetchFavorites())
 watch(filters, fetchItems)
-provide('addToFavorite',addToFavorite)
 </script>
 
 <template>
@@ -99,7 +98,7 @@ provide('addToFavorite',addToFavorite)
         </div>
       </div>
       <div class="mt-10">
-        <SneakersCardList :items="items" />
+        <SneakersCardList :items="items" @addToFavorite="addToFavorite"  />
       </div>
     </div>
   </div>

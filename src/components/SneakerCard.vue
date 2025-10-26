@@ -1,25 +1,17 @@
 <script setup lang="ts">
-import { inject } from 'vue'
 
-const props = defineProps({
+defineProps({
   id:String,
   imageUrl: String,
   title: String,
   price: Number,
-  isFavourite: Boolean,
+  isFavorite: Boolean,
   isAdded: Boolean,
   onClickAdd: Function,
-
+  onClickFavorite: Function,
 })
 
-const addToFavorite = inject('addToFavorite')
 
-const onClickFavorite = () => {
-  const obj = {
-    parentId:props.id,
-  }
-  addToFavorite(obj)
-}
 
 </script>
 
@@ -28,7 +20,7 @@ const onClickFavorite = () => {
     class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer transition hover:-translate-y-2 hover:shadow-xl"
   >
     <img
-      :src="isFavourite ? '/like-1.svg' : '/like-2.svg'"
+      :src="isFavorite ? '/like-2.svg' : '/like-1.svg'"
       alt="like"
       class="absolute top-0 left-0"
       @click="onClickFavorite"
@@ -40,7 +32,7 @@ const onClickFavorite = () => {
         <b>Цена </b>
         <span class="text-slate-400">{{ price }} руб.</span>
       </div>
-      <img :src="isAdded ? '/checked.svg' : '/plus.svg'" alt="Plus" @click="" />
+      <img :src="isAdded ? '/checked.svg' : '/plus.svg'" alt="Plus" @click="onClickAdd" />
     </div>
   </div>
 </template>

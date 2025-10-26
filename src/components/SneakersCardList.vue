@@ -1,12 +1,11 @@
 <script setup>
 import SneakerCard from '/src/components/SneakerCard.vue'
+
 defineProps({
   items: Array,
 })
-const handleClickAdd = () => {
-
-}
-
+const emit = defineEmits(['addToFavorite'])
+const handleClickAdd = () => {}
 </script>
 <template>
   <div class="grid grid-cols-4 gap-5">
@@ -19,6 +18,7 @@ const handleClickAdd = () => {
       :is-added="false"
       :is-favourite="true"
       :on-click-add="handleClickAdd"
+      :on-click-favorite="() => emit('addToFavorite', item)"
       :is-favorite="item.isFavorite"
     />
   </div>

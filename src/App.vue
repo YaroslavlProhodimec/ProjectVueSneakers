@@ -1,7 +1,7 @@
 <script setup>
 import AppHeader from '@/components/AppHeader.vue'
 import SneakersCardList from '@/components/SneakersCardList.vue'
-import { onMounted, provide, reactive, ref, watch } from 'vue'
+import { computed, onMounted, provide, reactive, ref, watch } from 'vue'
 import axios from 'axios'
 import DrawerSide from '@/components/DrawerSide.vue'
 // import DrawerSide from '@/components/DrawerSide.vue'
@@ -98,7 +98,26 @@ const fetchFavorites = async () => {
     console.log(e)
   }
 }
+const isCreatingOrder = ref(false)
+const createOrder = async () => {
+  try {
+    isCreatingOrder.value = true
+    const { data } = await axios.post('https://5ac01713d7a29def.mokky.dev/orders', {
+      items: cart.value,
+      totalPrice: cart.value,
+    })
 
+    cart.value = []
+
+    return data
+  } catch (e) {
+    isCreatingOrder.value = false
+
+    console.log(e)
+  } finally {
+    isCreatingOrder.value = false
+  }
+}
 onMounted(async () => {
   await fetchItems()
   await fetchFavorites()
@@ -111,6 +130,13 @@ const closeDrawer = () => {
 const openDrawer = () => {
   drawerOpen.value = true
 }
+watch(cart, () => {
+  items.value = items.value.map((item) => ({
+  ...item,
+      isAdded:false
+    }))
+},deep)
+
 
 provide('cart', {
   cart,
@@ -118,12 +144,25 @@ provide('cart', {
   closeDrawer,
   openDrawer,
 })
+
+const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
+const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
+const cartIsEmpty = computed(() => cart.value.length === 0)
+const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
+
 </script>
 
 <template>
   <div class="w-4/5 m-auto h-screen rounded-xl shadow-xl mt-14">
-    <AppHeader @open-drawer="openDrawer" />
-    <DrawerSide v-if="drawerOpen" @closeDrawer="closeDrawer" />
+    <AppHeader :total-price="totalPrice" @open-drawer="openDrawer" />
+    <DrawerSide
+      :disableButton="cartButtonDisabled"
+      @create-order="createOrder"
+      v-if="drawerOpen"
+      :total-price="totalPrice"
+      :vat-price="vatPrice"
+      @closeDrawer="closeDrawer"
+    />
     <div class="p-10">
       <div class="flex justify-between items-center">
         <h2 class="text-3xl fond-bold mb-8">Все кроссовки</h2>

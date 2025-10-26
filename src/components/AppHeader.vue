@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
-
+defineProps({
+  totalPrice:Array
+})
 const emit = defineEmits(['open-drawer'])
 
 
@@ -18,7 +20,7 @@ const emit = defineEmits(['open-drawer'])
     <ul class="flex items-center gap-10 ">
       <li @click="()=>emit('open-drawer')" class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
         <img src="/cart.svg" alt="Cart">
-        <span>1333 руб.</span>
+        <span>{{totalPrice}} руб.</span>
       </li>
       <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
         <img src="/heart.svg" alt="Cart">

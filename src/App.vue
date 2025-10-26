@@ -6,16 +6,26 @@ import axios from 'axios'
 import DrawerSide from '@/components/DrawerSide.vue'
 // import DrawerSide from '@/components/DrawerSide.vue'
 const items = ref([])
+const cart = ref([])
 
 const filters = reactive({
   sortBy: 'title',
   searchQuery: '',
 })
 const addToCart = (item) => {
+  cart.value.push(item)
+  item.isAdded = true
+}
+
+const removeFromCart = (item) => {
+  cart.value.splice(cart.value.indexOf(item), 1)
+  item.isAdded = false
+}
+const onClickAddPlus = (item) => {
   if (!item.isAdded) {
-    item.isAdded = true
+    addToCart(item)
   } else {
-    item.isAdded = false
+    removeFromCart(item)
   }
 }
 
@@ -103,7 +113,8 @@ const openDrawer = () => {
 }
 
 provide('cart', {
-
+  cart,
+  removeFromCart,
   closeDrawer,
   openDrawer,
 })
@@ -135,7 +146,11 @@ provide('cart', {
         </div>
       </div>
       <div class="mt-10">
-        <SneakersCardList :items="items" @addToFavorite="addToFavorite" @addToCart="addToCart" />
+        <SneakersCardList
+          :items="items"
+          @addToFavorite="addToFavorite"
+          @addToCart="onClickAddPlus"
+        />
       </div>
     </div>
   </div>

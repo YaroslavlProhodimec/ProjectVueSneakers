@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import DrawerHead from '/src/components/DrawerHead.vue'
-import CartListItem from '/src/components/CartListItem.vue'
+import DrawerHead from '/src/components/DrawerHead.vue';
+import CartListItem from '/src/components/CartListItem.vue';
+import InfoBlock from '/src/components/InfoBlock.vue';
 
 defineProps({
   totalPrice: Number,
@@ -10,15 +11,17 @@ defineProps({
 
 const emit = defineEmits(['create-order'])
 
-
 </script>
 <template>
   <div class="fixed top-0 left-0 h-full w-full bg-black z-10 opacity-70"></div>
   <div class="bg-white w-96 h-full fixed right-0 top-0 z-20 p-8">
+    <div v-if="!totalPrice"  class="flex h-full items-center ">
+      <InfoBlock  />
+    </div>
     <DrawerHead />
-    <CartListItem />
+    <CartListItem  v-if="totalPrice"/>
 
-    <div class="flex flex-col gap-4 mt-7">
+    <div v-if="totalPrice" class="flex flex-col gap-4 mt-7">
       <div class="flex gap-3">
         <span>Итого:</span>
         <div class="flex-1 border-b border-dashed"></div>

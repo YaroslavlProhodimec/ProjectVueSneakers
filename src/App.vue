@@ -119,6 +119,14 @@ const createOrder = async () => {
   }
 }
 onMounted(async () => {
+  const localCart = localStorage.getItem('cart', JSON.stringify(cart.value))
+  cart.value = localCart ? JSON.parse(localCart) : []
+
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cart.value.some((el) => el.id === item.id )
+  }))
+
   await fetchItems()
   await fetchFavorites()
 })
@@ -131,12 +139,20 @@ const openDrawer = () => {
   drawerOpen.value = true
 }
 watch(cart, () => {
+  console.log(cart, 'cart')
   items.value = items.value.map((item) => ({
-  ...item,
-      isAdded:false
-    }))
-},deep)
+    ...item,
+    isAdded: false,
+  }))
+})
 
+watch(
+  cart,
+  () => {
+    localStorage.setItem('cart', JSON.stringify(cart.value))
+  },
+  { deep: true },
+)
 
 provide('cart', {
   cart,
@@ -149,7 +165,6 @@ const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.pr
 const vatPrice = computed(() => Math.round((totalPrice.value * 5) / 100))
 const cartIsEmpty = computed(() => cart.value.length === 0)
 const cartButtonDisabled = computed(() => isCreatingOrder.value || cartIsEmpty.value)
-
 </script>
 
 <template>

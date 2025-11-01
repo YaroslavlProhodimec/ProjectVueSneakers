@@ -26,6 +26,7 @@
       @addToCart="onClickAddPlus"
     />
   </div>
+
 </template>
 <script setup lang="ts">
 import SneakersCardList from '@/components/SneakersCardList.vue'
